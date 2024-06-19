@@ -42,6 +42,13 @@ module.exports = {
         }).then(() => {
             queue.push({details: songDetails, interaction: interaction});
             interaction.editReply(`Added ${songDetails.title}, (${songDetails.author}) to the queue!`);
+            return new Promise((resolve, reject) => {
+                ytdl(interaction.options.getString('song'), {filter: "audioonly"})
+                    .pipe(require("fs").createWriteStream(`tracks/${songDetails.id}.mp3`))
+                    .on('finish', resolve)
+                    .on('error', reject);
+            });
+        }).then(() => {
             if (queue.length === 1) {
                 playSong(channel.guild.id);
             }
