@@ -1,1 +1,1 @@
-web: node index.js -p 80
+web: node index.js -p $PORT
