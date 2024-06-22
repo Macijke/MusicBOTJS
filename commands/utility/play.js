@@ -2,7 +2,7 @@ const {SlashCommandBuilder} = require("discord.js");
 const {
     createAudioResource,
     createAudioPlayer,
-    getVoiceConnection
+    getVoiceConnection, CreateAudioResourceOptions
 } = require("@discordjs/voice");
 const ytdl = require('@distube/ytdl-core');
 
@@ -43,7 +43,7 @@ module.exports = {
             queue.push({details: songDetails, interaction: interaction});
             interaction.editReply(`Added ${songDetails.title}, (${songDetails.author}) to the queue!`);
             return new Promise((resolve, reject) => {
-                ytdl(interaction.options.getString('song'), {filter: "audioonly"})
+                ytdl(interaction.options.getString('song'), {filter: "audioonly", quality: 'highestaudio', dlChunkSize: 0, })
                     .pipe(require("fs").createWriteStream(`tracks/${songDetails.id}.mp3`))
                     .on('finish', resolve)
                     .on('error', reject);
@@ -56,7 +56,8 @@ module.exports = {
             console.error(`Error occurred while downloading or playing the song: ${error}`);
         });
     },
-    queues: queues
+    queues: queues,
+    playSong: playSong,
 }
 
 function playSong(guildId) {
